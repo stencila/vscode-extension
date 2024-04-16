@@ -1,0 +1,27 @@
+{
+  "type": "CodeChunk",
+  "code": "if # This is a syntax error",
+  "programmingLanguage": "python",
+  "executionCount": 1,
+  "executionRequired": "ExecutionFailed",
+  "executionStatus": "Exceptions",
+  "executionEnded": {
+    "type": "Timestamp",
+    "value": 1710456671989,
+    "timeUnit": "Millisecond"
+  },
+  "executionDuration": {
+    "type": "Duration",
+    "value": 3,
+    "timeUnit": "Millisecond"
+  },
+  "executionMessages": [
+    {
+      "type": "ExecutionMessage",
+      "level": "Exception",
+      "message": "invalid syntax (<code>, line 1)",
+      "errorType": "SyntaxError",
+      "stackTrace": "^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^\n  File \"<code>\", line 1\n    if # This is a syntax error\n    ^^\nSyntaxError: invalid syntax"
+    }
+  ]
+}

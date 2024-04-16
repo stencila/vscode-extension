@@ -1,0 +1,22 @@
+{# Override of default template for executable node types #}
+{% block header %}
+### {{ execution_status_emoji(executionStatus) }} {{ type }}
+
+***
+{% endblock %}
+
+{% if executionMessages %}
+***
+
+#### Messages
+
+{% for message in executionMessages %}
+{{ message.level }} {{ message.message }}
+
+```{{ programminLanguage }}
+{{ message.stackTrace }}
+```
+
+***
+{% endfor %}
+{% endif %}

@@ -12,14 +12,48 @@
  *   language server function will implement
  */
 
+import { ExecutionStatus } from "@stencila/types";
 import { InitializeResult, createConnection } from "vscode-languageserver/node";
 import { configure } from "nunjucks";
 import { readFileSync } from "fs";
 import * as path from "path";
 
+// The root dir of this repo
+const rootDir = path.join(__dirname, "..");
+
+const camelToKebab = (str: string) =>
+  str.replace(/([a-z])([A-Z])/g, "$1-$2").toLowerCase();
+
 // Point Nunjucks to the templates folder
-const env = configure(path.join(__dirname, "..", "templates"));
-env.addFilter("to_json", (object) => JSON.stringify(object));
+const env = configure(path.join(rootDir, "templates"));
+
+// Get the emoji for a node
+env.addGlobal("execution_status_emoji", (status: ExecutionStatus) => {
+  return (
+    {
+      Succeeded: "🟢",
+      Errors: "🟥",
+      Exceptions: "🟥",
+      Cancelled: "🔶",
+    }[status] ?? "🔵"
+  );
+});
+
+// Get the icon for a node
+env.addGlobal("node_icon", (type: string) => {
+  try {
+    const base64 = readFileSync(
+      path.join(rootDir, "icons", "nodes", `${camelToKebab(type)}.svg`),
+      "base64"
+    );
+    return `![](data:image/svg+xml;base64,${base64})`;
+  } catch {
+    return undefined;
+  }
+});
+
+// Represent a node as JSON
+env.addGlobal("to_json", (object: any) => JSON.stringify(object));
 
 // Custom logging functions for better visibility in server outputs
 const debug = (...args: any[]) =>
@@ -52,19 +86,26 @@ connection.onInitialize((params): InitializeResult => {
  */
 connection.onHover(({ textDocument, position }) => {
   // Read the line
-  const line = readFileSync(
-    textDocument.uri.replace("file://", ""),
-    "utf-8"
-  ).split("\n")[position.line];
+  const line = readFileSync(textDocument.uri.replace("file://", ""), "utf-8")
+    .split("\n")
+    [position.line].trim();
 
   // Guess the type of node based on the content of the line
   let template = "default";
   let fixture;
   if (line.startsWith("```") && line.endsWith("exec")) {
     template = "code-chunk";
-    fixture = "code-chunk-succeeded";
+    fixture = "code-chunk";
+    if (line.startsWith("```py")) {
+      fixture += ".with-exception";
+    }
+  } else if (line.startsWith("```")) {
+    fixture = "code-block";
+  } else if (line.startsWith("::: for")) {
+    template = "for-block";
+    fixture = "for-block";
   } else if (position.line > 10) {
-    fixture = "paragraph-with-authors";
+    fixture = "paragraph.with-authors";
   } else {
     fixture = "paragraph";
   }
@@ -77,13 +118,14 @@ connection.onHover(({ textDocument, position }) => {
   // Read the corresponding node from fixtures
   const node = JSON.parse(
     readFileSync(
-      path.join(__dirname, "..", "fixtures", "nodes", `${fixture}.json`),
+      path.join(rootDir, "fixtures", "nodes", `${fixture}.json`),
       "utf-8"
     )
   );
 
   // Render the Markdown template for the node
   const md = env.render(`hover/${template}.jinja`, node);
+  //debug(md);
 
   return {
     contents: {

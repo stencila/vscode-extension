@@ -1,9 +1,18 @@
-## {{ type }}
+{% block header %}
+### {{ type }}
+
+***
+{% endblock %}
+
+{% block main %}
+{% endblock %}
 
 {% if authors %}
-### Authors
+***
+
+#### Authors
 
 {% for author in authors %}
-- {{ author|to_json }}
+- {{ to_json(author) }}
 {% endfor %}
 {% endif %}
