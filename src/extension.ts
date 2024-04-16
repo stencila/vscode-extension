@@ -14,22 +14,41 @@ let client: LanguageClient;
  * Activate the extension
  */
 export function activate(context: vscode.ExtensionContext) {
-  // Use the console to output diagnostic information (console.log) and errors (console.error)
-  // This line of code will only be executed once when your extension is activated
-  console.log('Congratulations, your extension "stencila" is now active!');
+  // Register command to execute the active document
+  context.subscriptions.push(
+    vscode.commands.registerCommand("stencila.invokeExecuteDocument", () => {
+      const editor = vscode.window.activeTextEditor;
+      if (!editor) {
+        vscode.window.showErrorMessage("No active editor");
+        return;
+      }
 
-  // The command has been defined in the package.json file
-  // Now provide the implementation of the command with registerCommand
-  // The commandId parameter must match the command field in package.json
-  let disposable = vscode.commands.registerCommand(
-    "stencila.helloWorld",
-    () => {
-      // The code you place here will be executed every time your command is executed
-      // Display a message box to the user
-      vscode.window.showInformationMessage("Hello World from Stencila!");
-    }
+      vscode.commands.executeCommand(
+        "stencila.executeDocument",
+        editor.document.uri.path
+      );
+
+      // TODO: Provide cancellation buttons and notify of completion
+      vscode.window.showInformationMessage("Document is executing");
+    })
   );
-  context.subscriptions.push(disposable);
+
+  // Register command to execute the selected node
+  context.subscriptions.push(
+    vscode.commands.registerCommand("stencila.invokeExecuteNode", () => {
+      const editor = vscode.window.activeTextEditor;
+      if (!editor) {
+        vscode.window.showErrorMessage("No active editor");
+        return;
+      }
+
+      vscode.commands.executeCommand(
+        "stencila.executeNode",
+        editor.document.uri.path,
+        editor.selection.active
+      );
+    })
+  );
 
   // Start the language server client
   const serverModule = context.asAbsolutePath(path.join("out", "server.js"));
@@ -42,6 +61,10 @@ export function activate(context: vscode.ExtensionContext) {
   };
   const clientOptions: LanguageClientOptions = {
     documentSelector: [{ scheme: "file", language: "smd" }],
+    markdown: {
+      isTrusted: true,
+      supportHtml: true,
+    },
   };
   client = new LanguageClient(
     "stencila",

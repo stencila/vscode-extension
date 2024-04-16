@@ -27,19 +27,22 @@ const camelToKebab = (str: string) =>
 // Point Nunjucks to the templates folder
 const env = configure(path.join(rootDir, "templates"));
 
-// Get the emoji for a node
+// Get an emoji for the execution status of a node
 env.addGlobal("execution_status_emoji", (status: ExecutionStatus) => {
   return (
     {
+      Pending: "🕑",
+      Running: "⚡",
       Succeeded: "🟢",
-      Errors: "🟥",
-      Exceptions: "🟥",
+      Warnings: "⚠️",
+      Errors: "🚨",
+      Exceptions: "💥",
       Cancelled: "🔶",
-    }[status] ?? "🔵"
+    }[status as string] ?? "🔵"
   );
 });
 
-// Get the icon for a node
+// Get the Markdown icon for a node
 env.addGlobal("node_icon", (type: string) => {
   try {
     const base64 = readFileSync(
@@ -50,6 +53,11 @@ env.addGlobal("node_icon", (type: string) => {
   } catch {
     return undefined;
   }
+});
+
+// Get a Markdown link to execute a node
+env.addGlobal("execute_node_button", (node_id: string) => {
+  return `[Run](command:stencila.executeNode)`;
 });
 
 // Represent a node as JSON
@@ -75,6 +83,9 @@ connection.onInitialize((params): InitializeResult => {
   return {
     capabilities: {
       hoverProvider: true,
+      executeCommandProvider: {
+        commands: ["stencila.executeDocument", "stencila.executeNode"],
+      },
     },
   };
 });
@@ -133,6 +144,19 @@ connection.onHover(({ textDocument, position }) => {
       value: md,
     },
   };
+});
+
+/**
+ * Handle an `executeCommand` request
+ */
+connection.onExecuteCommand(({ command, arguments: args }) => {
+  if (command === "stencila.executeDocument") {
+    info("Execute document", args);
+  } else if (command === "stencila.executeNode") {
+    info("Execute node", args);
+  } else {
+    debug(command, args);
+  }
 });
 
 // Listen on the connection

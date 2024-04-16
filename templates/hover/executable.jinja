@@ -3,18 +3,20 @@
 ### {{ execution_status_emoji(executionStatus) }} {{ type }}
 
 ***
+
+{{ execute_node_button('theNodeId') }}
+
+***
 {% endblock %}
 
 {% if executionMessages %}
 ***
 
-#### Messages
-
 {% for message in executionMessages %}
-{{ message.level }} {{ message.message }}
+**{{ message.level }}**: `{{ message.message | safe }}`
 
 ```{{ programminLanguage }}
-{{ message.stackTrace }}
+{{ message.stackTrace | safe }}
 ```
 
 ***

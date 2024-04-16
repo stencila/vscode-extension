@@ -38,10 +38,26 @@
     },
     "commands": [
       {
-        "command": "stencila.helloWorld",
-        "title": "Hello World"
+        "command": "stencila.invokeExecuteDocument",
+        "title": "Execute the current document"
+      },
+      {
+        "command": "stencila.invokeExecuteNode",
+        "title": "Execute the current node"
       }
     ],
+    "menus": {
+      "commandPalette": [
+        {
+          "command": "stencila.invokeExecuteDocument",
+          "when": "editorLangId == smd"
+        },
+        {
+          "command": "stencila.invokeExecuteNode",
+          "when": "editorLangId == smd"
+        }
+      ]
+    },
     "languages": [
       {
         "id": "smd",
