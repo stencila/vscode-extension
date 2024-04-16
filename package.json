@@ -19,6 +19,23 @@
       "Visualization",
       "Notebooks"
     ],
+    "configuration": {
+      "type": "object",
+      "title": "Stencila",
+      "properties": {
+        "smd.trace.server": {
+          "description": "Traces the communication between VS Code and the Stencila language server.",
+          "scope": "window",
+          "type": "string",
+          "enum": [
+            "off",
+            "messages",
+            "verbose"
+          ],
+          "default": "off"
+        }
+      }
+    },
     "commands": [
       {
         "command": "stencila.helloWorld",
@@ -71,6 +88,7 @@
     "test": "vscode-test"
   },
   "devDependencies": {
+    "@stencila/types": "^2.0.0-alpha.25",
     "@types/mocha": "^10.0.6",
     "@types/node": "18.x",
     "@types/vscode": "^1.88.0",
