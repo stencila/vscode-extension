@@ -88,9 +88,9 @@
     "test": "vscode-test"
   },
   "devDependencies": {
-    "@stencila/types": "^2.0.0-alpha.25",
     "@types/mocha": "^10.0.6",
     "@types/node": "18.x",
+    "@types/nunjucks": "^3.2.6",
     "@types/vscode": "^1.88.0",
     "@typescript-eslint/eslint-plugin": "^7.4.0",
     "@typescript-eslint/parser": "^7.4.0",
@@ -101,6 +101,7 @@
     "typescript": "^5.3.3"
   },
   "dependencies": {
+    "nunjucks": "^3.2.4",
     "vscode-languageclient": "^9.0.1",
     "vscode-languageserver": "^9.0.1"
   }

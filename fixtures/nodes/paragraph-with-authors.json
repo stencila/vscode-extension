@@ -1,0 +1,41 @@
+{
+  "type": "Paragraph",
+  "content": [
+    {
+      "type": "Text",
+      "value": "The ocean, a vast expanse of mystery and wonder, is home to some of the most fascinating creatures on Earth. Among these, the fish known for their uncanny speed stand out, showcasing natures marvel in the aquatic realm. This article dives into the realm of these speedy swimmers, discussing various aspects from the mechanisms behind their remarkable speed to a comprehensive overview of the top contenders."
+    }
+  ],
+  "authors": [
+    {
+      "type": "AuthorRole",
+      "author": {
+        "type": "SoftwareApplication",
+        "id": "openai/gpt-4-0125-preview",
+        "name": "GPT",
+        "version": "4-0125-preview"
+      },
+      "roleName": "Generator",
+      "lastModified": {
+        "type": "Timestamp",
+        "value": 1710989144957,
+        "timeUnit": "Millisecond"
+      }
+    },
+    {
+      "type": "AuthorRole",
+      "author": {
+        "type": "SoftwareApplication",
+        "id": "stencila/insert-blocks",
+        "name": "Insert Blocks",
+        "version": "0.1.0"
+      },
+      "roleName": "Prompter",
+      "lastModified": {
+        "type": "Timestamp",
+        "value": 1710989144957,
+        "timeUnit": "Millisecond"
+      }
+    }
+  ]
+}

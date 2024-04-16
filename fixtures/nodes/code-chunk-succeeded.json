@@ -1,0 +1,19 @@
+{
+  "type": "CodeChunk",
+  "code": "print(\"Hello world!\")",
+  "programmingLanguage": "python",
+  "outputs": ["Hello world!"],
+  "executionCount": 1,
+  "executionRequired": "No",
+  "executionStatus": "Succeeded",
+  "executionEnded": {
+    "type": "Timestamp",
+    "value": 1710299943307,
+    "timeUnit": "Millisecond"
+  },
+  "executionDuration": {
+    "type": "Duration",
+    "value": 1605,
+    "timeUnit": "Millisecond"
+  }
+}

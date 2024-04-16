@@ -13,8 +13,13 @@
  */
 
 import { InitializeResult, createConnection } from "vscode-languageserver/node";
+import { configure } from "nunjucks";
+import { readFileSync } from "fs";
+import * as path from "path";
 
-import { getBlock } from "./fixtures/nodes";
+// Point Nunjucks to the templates folder
+const env = configure(path.join(__dirname, "..", "templates"));
+env.addFilter("to_json", (object) => JSON.stringify(object));
 
 // Custom logging functions for better visibility in server outputs
 const debug = (...args: any[]) =>
@@ -43,31 +48,42 @@ connection.onInitialize((params): InitializeResult => {
 /**
  * Handle a hover request
  *
- * This should return Markdown content for the hover card.
+ * This should return Markdown content related to the node at the `position`.
  */
 connection.onHover(({ textDocument, position }) => {
-  const node = getBlock(position);
-  if (!node) {
+  // Read the line
+  const line = readFileSync(
+    textDocument.uri.replace("file://", ""),
+    "utf-8"
+  ).split("\n")[position.line];
+
+  // Guess the type of node based on the content of the line
+  let template = "default";
+  let fixture;
+  if (line.startsWith("```") && line.endsWith("exec")) {
+    template = "code-chunk";
+    fixture = "code-chunk-succeeded";
+  } else if (position.line > 10) {
+    fixture = "paragraph-with-authors";
+  } else {
+    fixture = "paragraph";
+  }
+
+  // If no fixture, don't return a hover
+  if (fixture === undefined) {
     return undefined;
   }
 
-  const md = `
-## ${node.type}
+  // Read the corresponding node from fixtures
+  const node = JSON.parse(
+    readFileSync(
+      path.join(__dirname, "..", "fixtures", "nodes", `${fixture}.json`),
+      "utf-8"
+    )
+  );
 
-***
-
-All basic markdown is supported including lists and tables
-
-We can also include images as dataURis which allows for icons etc.
-
-![Status](data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHdpZHRoPSIxMDAiIGhlaWdodD0iMTAwIj4KICA8Y2lyY2xlIGN4PSI1MCIgY3k9IjUwIiByPSI0MCIgc3Ryb2tlPSJibGFjayIgc3Ryb2tlLXdpZHRoPSIzIiBmaWxsPSJyZWQiIC8+Cjwvc3ZnPg== "Image Title")
-
-The main constraint seems to be vertical height of hover to avoid need for scrolling.
-
-***
-
-\`${textDocument.uri}:${position.line}:${position.character}\`
-`;
+  // Render the Markdown template for the node
+  const md = env.render(`hover/${template}.jinja`, node);
 
   return {
     contents: {

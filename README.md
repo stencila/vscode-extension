@@ -1,5 +1,16 @@
 # stencila README
 
+
+## Developing
+
+### Organization
+
+- `fixtures/nodes`: contains examples of Stencila nodes in JSON
+
+- `templates`: contains Nunjucks Markdown templates for creating [`Hover`](https://microsoft.github.io/language-server-protocol/specifications/lsp/3.17/specification/#textDocument_hover) content from nodes. These are prototypes that will be moved to the `rust/lsp` crate (in the main `stencila/stencila` repo) as Jinja2 templates.
+
+
+
 This is the README for your extension "stencila". After writing up a brief description, we recommend including the following sections.
 
 ## Features

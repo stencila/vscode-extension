@@ -1,0 +1,9 @@
+## {{ type }}
+
+{% if authors %}
+### Authors
+
+{% for author in authors %}
+- {{ author|to_json }}
+{% endfor %}
+{% endif %}
